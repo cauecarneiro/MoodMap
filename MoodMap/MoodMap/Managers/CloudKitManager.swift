@@ -13,6 +13,7 @@ class CloudKitManager {
     private(set) var error: CloudKitErrors? = nil
     private let container = CKContainer.default()
     
+    
     func checkICloudStatus() async {
         do {
             let status = try await container.accountStatus()
@@ -36,4 +37,9 @@ class CloudKitManager {
         }
     }
     
+    func fetchItems() {}
+    
+    func saveItem(item: CKRecord) {}
+    
+    func updateItem() {}
 }
