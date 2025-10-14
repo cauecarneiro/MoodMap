@@ -7,10 +7,18 @@
 
 import CloudKit
 
-class CloudKitController<T> {
+class CloudKitController<T: CKRecord> {
     private let container: CKContainer
     
     init() {
         self.container = CKContainer.default()
     }
+    
+    func save(item: T) {
+        
+    }
+}
+
+extension CKRecord {
+    
 }
