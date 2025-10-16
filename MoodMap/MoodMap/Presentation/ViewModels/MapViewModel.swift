@@ -7,12 +7,10 @@
 
 import Combine
 
-class ContentViewModel: ObservableObject {
+class MapViewModel: ObservableObject {
     
     private let notificationManager: NotificationManager = .init()
     private let cloudKitManager: CloudKitManager = .init()
-    
-    
     
     
 }

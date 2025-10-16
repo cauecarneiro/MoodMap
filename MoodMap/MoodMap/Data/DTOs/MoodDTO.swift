@@ -7,8 +7,7 @@
 
 import CoreLocation
 
-struct CreateMoodDTO {
-    let id: UUID
+struct MoodDTO: Hashable {
     let feeling: String
     let description: String
     let location: CLLocation
