@@ -5,8 +5,8 @@
 //  Created by Breno Marques on 14/10/25.
 //
 
-import Foundation
+import CloudKit
 
-class MoodNote {
+struct MoodNote {
     
 }
