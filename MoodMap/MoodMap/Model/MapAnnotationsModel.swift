@@ -8,14 +8,14 @@
 import Foundation
 import CoreLocation
 
-struct MapAnnotationsModel {
-    let nomeLocal: String
-    let coordenadasLocal: CLLocationCoordinate2D
-    let sfSymbolLocal: String
-
-    init(nomeLocal: String, coordenadasLocal: CLLocationCoordinate2D, sfSymbolLocal: String) {
-        self.nomeLocal = nomeLocal
-        self.coordenadasLocal = coordenadasLocal
-        self.sfSymbolLocal = sfSymbolLocal
+class MapAnnotationsModel {
+    let localName: String
+    let localCoordinates: CLLocationCoordinate2D
+    let localSFSymbol: String
+    
+    init(localName: String, localCoordinates: CLLocationCoordinate2D, localSFSymbol: String) {
+        self.localName = localName
+        self.localCoordinates = localCoordinates
+        self.localSFSymbol = localSFSymbol
     }
 }

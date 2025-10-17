@@ -11,7 +11,7 @@ import SwiftUI
 struct MoodMapApp: App {
     var body: some Scene {
         WindowGroup {
-            MapView()
+            LocationMapView()
         }
     }
 }
