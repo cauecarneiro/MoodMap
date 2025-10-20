@@ -10,4 +10,5 @@ import Foundation
 enum GlobalValues {
     static let containerIdentifier: String = "iCloud.com.challenge09.MoodMap"
     static let recordType: String = "MoodNote"
+    static let subscriptionID: String = "new_mood_created"
 }

@@ -6,42 +6,52 @@
 //
 
 import SwiftUI
-import CoreLocation
 
 struct MapView: View {
-    @State private var moods: [MoodDTO] = []
+    
+    @StateObject private var notificationManager = NotificationManager()
+    @State private var notificationStatus: NotificationStatus = .notAllowed
     
     var body: some View {
-        VStack {
-            Text("Salvar novo dado:")
+        NavigationView {
+            VStack {
+                
+            }
+            .navigationTitle("MoodMap")
             
-            List {
-                ForEach(moods, id: \.self) { mood in
-                    VStack {
-                        Text(mood.feeling)
-                        Text(mood.description)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        handleNotifications()
+                    } label: {
+                        Label("Notifications", systemImage: notificationStatus.image)
                     }
                 }
             }
-            
-            Button {
-                Task {
-                    let datasource = MoodDataSource()
-                    let newMood = MoodDTO(feeling: "Tédio", description: "A poluição tá alta", location: CLLocation(latitude: -23.5489, longitude: -46.6388))
-                    
-                    await datasource.saveMood(mood: newMood)
-                }
-            } label: {
-                Text("Salvar")
-                    .font(.headline)
-            }
-            .buttonStyle(.borderedProminent)
         }
-        .padding()
-        .onAppear {
-            let dataSource = MoodDataSource()
+    }
+    
+}
+
+
+extension MapView {
+    func handleNotifications() {
+        Task {
+            if !notificationManager.allowedNotifications {
+                await notificationManager.requestAuthorizationToNotifications()
+                notificationStatus = .unsubscribed
+            }
             
-            moods = dataSource.fetchMoods()
+            if !notificationManager.subscribedToNotification {
+                await notificationManager.subscribeToNotification(
+                    recordType: GlobalValues.recordType,
+                    subscriptionID: GlobalValues.subscriptionID
+                )
+                notificationStatus = .subscribed
+            } else {
+                await notificationManager.unsubscribeToNotification(subscriptionID: GlobalValues.subscriptionID)
+                notificationStatus = .unsubscribed
+            }
         }
     }
 }

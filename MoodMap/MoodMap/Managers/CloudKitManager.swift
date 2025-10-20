@@ -43,3 +43,7 @@ class CloudKitManager {
     
     func updateItem() {}
 }
+
+extension CloudKitManager {
+    static let container = CKContainer(identifier: GlobalValues.containerIdentifier)
+}
