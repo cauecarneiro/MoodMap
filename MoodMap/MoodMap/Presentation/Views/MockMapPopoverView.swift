@@ -21,7 +21,10 @@ struct MockMapPopoverView: View {
         .cornerRadius(10)
         
         .sheet(isPresented: $isPresentingPopover) {
-            MoodPopoverView(isPresented: $isPresentingPopover, textReview: $textOpinion)
+            MoodPopoverView(textReview: $textOpinion)
+                .onDisappear {
+                    isPresentingPopover = false
+                }
         }
     }
 }
