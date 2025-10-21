@@ -22,6 +22,7 @@ struct MoodTextEditorView: View {
                 .scrollContentBackground(.hidden)
                 .padding()
                 .scrollDismissesKeyboard(.immediately)
+                .onTapGesture { isFocused = true }
                 .onChange(of: text) { _, newValue in
                     if newValue.count > characterLimit {
                         text = String(newValue.prefix(characterLimit))
@@ -41,6 +42,9 @@ struct MoodTextEditorView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
+        .contentShape(Rectangle())
+        .onTapGesture { isFocused = false }
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
     }
 }
+
