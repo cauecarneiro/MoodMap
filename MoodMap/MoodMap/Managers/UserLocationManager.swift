@@ -5,7 +5,6 @@
 //  Created by Rodrigo Barbosa Pereira on 17/10/25.
 //
 
-import Foundation
 import CoreLocation
 import Combine
 
@@ -26,9 +25,7 @@ class UserLocationManager: NSObject, ObservableObject, CLLocationManagerDelegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else { return }
         
-        DispatchQueue.main.async {
-            self.userLocation = location.coordinate
-        }
+        DispatchQueue.main.async { self.userLocation = location.coordinate }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
