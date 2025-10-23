@@ -8,6 +8,7 @@
 import CoreLocation
 
 struct MoodDTO: Hashable {
+    let title: String
     let feeling: String
     let description: String
     let location: CLLocation

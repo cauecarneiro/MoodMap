@@ -5,43 +5,63 @@
 //  Created by Breno Marques on 14/10/25.
 //
 
+import Combine
 import CloudKit
+import CoreLocation
 
-class CloudKitManager {
+@MainActor
+class CloudKitManager: ObservableObject {
+
+    private let container = CKContainer(identifier: GlobalValues.containerIdentifier)
+    @Published var moods: [MoodDTO] = []
     
-    private(set) var isSignedInToICloud: Bool = false
-    private(set) var error: CloudKitErrors? = nil
-    private let container = CKContainer.default()
-    
-    
-    func checkICloudStatus() async {
-        do {
-            let status = try await container.accountStatus()
-            
-            switch status {
-            case .available:
-                self.isSignedInToICloud = true
-            case .couldNotDetermine:
-                self.error = CloudKitErrors.iCloudAccountNotDetermined
-            case .restricted:
-                self.error = CloudKitErrors.iCloudAccountRestricted
-            case .noAccount:
-                self.error = CloudKitErrors.iCloudAccountNotFound
-            case .temporarilyUnavailable:
-                self.error = CloudKitErrors.iCloudAccountNotAvailable
-            @unknown default:
-                self.error = CloudKitErrors.iCloudAccontUnknown
-            }
-        } catch (let error) {
-            print("Error: \(error.localizedDescription)")
-        }
+    init() {
+        fetchItems()
     }
     
-    func fetchItems() {}
+    public func fetchItems() {
+        let query = CKQuery(recordType: "MoodNote", predicate: NSPredicate(value: true))
+        let queryOperation = CKQueryOperation(query: query)
+        
+        var items: [MoodDTO] = []
+        
+        queryOperation.recordMatchedBlock = { (recordID, result) in
+            switch result {
+            case .success(let record):
+                let title = record["title"] as? String ?? "Title"
+                let feeling = record["feeling"] as? String ?? "Feeling"
+                let description = record["description"] as? String ?? "Description"
+                let location = record["location"] as? CLLocation ?? CLLocation()
+                
+                items.append(MoodDTO(title: title, feeling: feeling, description: description, location: location))
+            case .failure(let error):
+                print("Erro: \(error.localizedDescription)")
+            }
+        }
+        
+        queryOperation.queryResultBlock = { [weak self] result in
+            guard let self else { return }
+            
+            Task { @MainActor in self.moods = items }
+        }
+        
+        container.publicCloudDatabase.add(queryOperation)
+    }
     
-    func saveItem(item: CKRecord) {}
-    
-    func updateItem() {}
+    public func saveItem(mood: MoodDTO) async {
+        let record = CKRecord(recordType: GlobalValues.recordType)
+        record["title"] = mood.title as CKRecordValue
+        record["feeling"] = mood.feeling as CKRecordValue
+        record["description"] = mood.description as CKRecordValue
+        record["location"] = mood.location as CKRecordValue
+        
+        do {
+            let response = try await container.publicCloudDatabase.save(record)
+            print("Record: \(response)")
+        } catch {
+            print("Erro: \(error.localizedDescription)")
+        }
+    }
 }
 
 extension CloudKitManager {
