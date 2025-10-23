@@ -10,6 +10,7 @@ import MapKit
 
 struct MainMapView: View {
     @StateObject private var notificationManager = NotificationManager()
+    @StateObject private var cloudKitManager = CloudKitManager()
     @State private var notificationStatus: NotificationStatus = .notAllowed
     @State private var isPresentingPopover = false
     @State private var textOpinion: String = ""
@@ -23,13 +24,15 @@ struct MainMapView: View {
             ZStack {
                 // Mapa principal
                 Map {
-                    Annotation(academyPoint.localName, coordinate: academyPoint.localCoordinates) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(.background)
-                            Image(systemName: academyPoint.localSFSymbol)
-                                .foregroundStyle(.blue)
-                                .padding(8)
+                    ForEach(cloudKitManager.moods, id:\.self) { mood in
+                        Annotation(mood.title, coordinate: CLLocationCoordinate2D(latitude: mood.location.coordinate.latitude, longitude: mood.location.coordinate.longitude)) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(.background)
+                                Image(systemName: "bell.fill")
+                                    .foregroundStyle(.blue)
+                                    .padding(8)
+                            }
                         }
                     }
                     
@@ -82,9 +85,20 @@ struct MainMapView: View {
                         Label("Notifications", systemImage: notificationStatus.image)
                     }
                 }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        if let location = userLocationRequest.userLocation {
+                            print("Latitude: \(location.latitude)")
+                            print("Longitude: \(location.longitude)")
+                        }
+                    } label: {
+                        Label("Map", systemImage: "map.fill")
+                    }
+                }
             }
             .sheet(isPresented: $isPresentingPopover) {
-                MoodPopoverView(textReview: $textOpinion)
+                MoodPopoverView(textReview: $textOpinion, location: userLocationRequest.userLocation)
                     .onDisappear {
                         isPresentingPopover = false
                     }

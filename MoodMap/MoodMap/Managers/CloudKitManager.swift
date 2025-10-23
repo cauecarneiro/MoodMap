@@ -57,6 +57,7 @@ class CloudKitManager: ObservableObject {
         
         do {
             let response = try await container.publicCloudDatabase.save(record)
+            moods.append(mood)
             print("Record: \(response)")
         } catch {
             print("Erro: \(error.localizedDescription)")

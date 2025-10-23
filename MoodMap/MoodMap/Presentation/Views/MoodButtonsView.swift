@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MoodButtonsView: View {
-    @Binding var selectedMoods: Set<String>
+    @Binding var selectedMood: String
 
     private let moods = ["Chato", "Legal", "Animado", "Tranquilo", "Perigoso"]
 
@@ -16,15 +16,11 @@ struct MoodButtonsView: View {
         VStack(alignment: .leading, spacing: 8) {
             ForEach(moods, id: \.self) { mood in
                 Button(mood) {
-                    if selectedMoods.contains(mood) {
-                        selectedMoods.remove(mood)
-                    } else {
-                        selectedMoods.insert(mood)
-                    }
+                    selectedMood = mood
                 }
                 .font(.headline)
                 .buttonStyle(.bordered)
-                .tint(selectedMoods.contains(mood) ? .blue : nil)
+                .tint(mood == selectedMood ? .blue : nil)
             }
         }
         .padding()
@@ -32,8 +28,4 @@ struct MoodButtonsView: View {
         .background(.ultraThinMaterial)
         .cornerRadius(32)
     }
-}
-
-#Preview {
-    MoodButtonsView(selectedMoods: .constant([]))
 }
