@@ -12,12 +12,37 @@ struct MoodPopoverView: View {
     @FocusState private var isEditing: Bool
     @Environment(\.dismiss) private var dismiss
     @State private var selectedMoods: Set<String> = []
+    @State private var nomeDoLocal: String = ""
+    @FocusState private var isNomeFocused: Bool
     
     let textEditorCharacterLimit = 140
 
     var body: some View {
         NavigationView {
             ScrollView {
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Nome do local")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                    
+                    TextField("Digite aqui...", text: $nomeDoLocal)
+                        .focused($isNomeFocused)
+                        .textInputAutocapitalization(.words)
+                        .disableAutocorrection(true)
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color(.systemGray6))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(isNomeFocused ? Color.blue.opacity(0.6) : Color.clear, lineWidth: 1)
+                        )
+                        .scrollDismissesKeyboard(.immediately)
+                }
+                .padding()
+                
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading) {
                         Text("Como está o local?")
@@ -35,7 +60,7 @@ struct MoodPopoverView: View {
                     .padding()
                     
                     VStack(alignment: .leading) {
-                        Text("Conte mais (opcional)")
+                        Text("Conte mais")
                             .font(.title2)
                             .foregroundStyle(.secondary)
                         
@@ -76,4 +101,3 @@ struct MoodPopoverView: View {
         }
     }
 }
-
