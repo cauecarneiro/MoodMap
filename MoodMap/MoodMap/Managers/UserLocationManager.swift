@@ -14,13 +14,27 @@ class UserLocationManager: NSObject, ObservableObject, CLLocationManagerDelegate
 
     override init() {
         super.init()
-        self.locationManager.delegate = self
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
     func requestUserLocation() {
         locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
     }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+            switch manager.authorizationStatus {
+            case .authorizedWhenInUse, .authorizedAlways:
+                manager.requestLocation() // Só chama aqui, depois da permissão
+            case .denied, .restricted:
+                print("Acesso à localização negado.")
+            case .notDetermined:
+                // Ainda aguardando o usuário responder
+                break
+            @unknown default:
+                break
+            }
+        }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else { return }

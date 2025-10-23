@@ -85,9 +85,20 @@ struct MainMapView: View {
                         Label("Notifications", systemImage: notificationStatus.image)
                     }
                 }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        if let location = userLocationRequest.userLocation {
+                            print("Latitude: \(location.latitude)")
+                            print("Longitude: \(location.longitude)")
+                        }
+                    } label: {
+                        Label("Map", systemImage: "map.fill")
+                    }
+                }
             }
             .sheet(isPresented: $isPresentingPopover) {
-                MoodPopoverView(textReview: $textOpinion)
+                MoodPopoverView(textReview: $textOpinion, location: userLocationRequest.userLocation)
                     .onDisappear {
                         isPresentingPopover = false
                     }

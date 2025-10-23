@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct MoodPopoverView: View {
     @Binding var textReview: String
     @FocusState private var isEditing: Bool
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedMoods: Set<String> = []
+    @State private var selectedMood: String = ""
+    let location: CLLocationCoordinate2D?
     
     let textEditorCharacterLimit = 140
 
@@ -24,9 +26,9 @@ struct MoodPopoverView: View {
                             .font(.title2)
                             .foregroundStyle(.secondary)
                         
-                        MoodButtonsView(selectedMoods: $selectedMoods)
+                        MoodButtonsView(selectedMood: $selectedMood)
                         
-                        if selectedMoods.isEmpty {
+                        if selectedMood.isEmpty {
                             Text("Selecione pelo menos um humor para enviar.")
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
@@ -45,19 +47,21 @@ struct MoodPopoverView: View {
                     .padding()
                     
                     Button("Enviar") {
-                        let moodList = selectedMoods.sorted().joined(separator: ", ")
+                        let latitude = location?.latitude ?? -15.214213213
+                        let longitude = location?.longitude ?? -70.12321312
+                        
+                        let coordinates = CLLocation(latitude: latitude, longitude: longitude)
+                        
+                        let mood = selectedMood
                         let text = textReview.trimmingCharacters(in: .whitespacesAndNewlines)
                         var messageComponents: [String] = []
                        
-                        if !moodList.isEmpty {
-                            messageComponents.append("Moods: \"" + moodList + "\"")
-                        }
                         if !text.isEmpty {
                             messageComponents.append("Comentário: \"" + text + "\"")
                         }
                         
                         let message = messageComponents.isEmpty ? "(Nenhuma avaliação fornecida)" : messageComponents.joined(separator: " | ")
-                        print("Mensagem escrita: \(message)")
+                        print("Mensagem escrita: Sentimento - \(mood) - \(message)")
                         
                         isEditing = false
                         dismiss()
@@ -68,8 +72,8 @@ struct MoodPopoverView: View {
                     .padding()
                     .background(.ultraThinMaterial)
                     .cornerRadius(32)
-                    .disabled(selectedMoods.isEmpty)
-                    .opacity(selectedMoods.isEmpty ? 0.2 : 1)
+                    .disabled(selectedMood.isEmpty)
+                    .opacity(selectedMood.isEmpty ? 0.2 : 1)
                 }
                 .navigationTitle("Avaliar aqui")
             }
