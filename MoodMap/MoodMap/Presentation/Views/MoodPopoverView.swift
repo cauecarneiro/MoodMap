@@ -15,6 +15,8 @@ struct MoodPopoverView: View {
     @State private var selectedMood: String = ""
     @State private var nomeDoLocal: String = ""
     @FocusState private var isNomeFocused: Bool
+    
+    @StateObject private var manager = CloudKitManager()
     let location: CLLocationCoordinate2D?
     
     let textEditorCharacterLimit = 140
@@ -77,16 +79,14 @@ struct MoodPopoverView: View {
                         
                         let coordinates = CLLocation(latitude: latitude, longitude: longitude)
                         
-                        let mood = selectedMood
-                        let text = textReview.trimmingCharacters(in: .whitespacesAndNewlines)
-                        var messageComponents: [String] = []
-                       
-                        if !text.isEmpty {
-                            messageComponents.append("Comentário: \"" + text + "\"")
-                        }
+                        let mood = MoodDTO(
+                            title: nomeDoLocal,
+                            feeling: selectedMood,
+                            description: textReview,
+                            location: coordinates
+                        )
                         
-                        let message = messageComponents.isEmpty ? "(Nenhuma avaliação fornecida)" : messageComponents.joined(separator: " | ")
-                        print("Mensagem escrita: Sentimento - \(mood) - \(message)")
+                        Task { await manager.saveItem(mood: mood) }
                         
                         isEditing = false
                         dismiss()
